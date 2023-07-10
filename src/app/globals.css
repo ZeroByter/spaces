@@ -9,4 +9,8 @@ html {
 
 body {
   background: rgb(30, 30, 35);
+  margin: 0px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }

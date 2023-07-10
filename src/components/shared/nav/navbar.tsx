@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { FC } from "react";
 import { decryptAccountToken } from "@/serverlib/auth";
 import UsersSQL from "@/serverlib/sql-classes/users";
+import css from "./navbar.module.scss";
+import Spacer from "../spacer";
 
 async function getUser() {
   const account = cookies().get("account")?.value;
@@ -26,12 +28,12 @@ const Navbar: FC = async () => {
 
     return (
       <>
-        <div>
-          <Link href="/login">Sign in</Link>
-        </div>
-        <div>
-          <Link href="/register">Sign up</Link>
-        </div>
+        <Link className={css.link} href="/login">
+          Sign in
+        </Link>
+        <Link className={css.link} href="/register">
+          Sign up
+        </Link>
       </>
     );
   };
@@ -40,19 +42,27 @@ const Navbar: FC = async () => {
     if (!user) return;
 
     return (
-      <div>
-        <Link href="/createSpace">Create space</Link>
-      </div>
+      <Link className={css.link} href="/createSpace">
+        Create space
+      </Link>
     );
   };
 
   return (
-    <div>
-      <div>
-        <Link href="/">Spaces</Link>
-        {renderLoggedIn()}
-        {renderLoggedOut()}
-      </div>
+    <div className={css.root}>
+      <Link href="/" className={css.logo}>
+        Spaces
+      </Link>
+      <Spacer />
+      {renderLoggedIn()}
+      {renderLoggedOut()}
+      <Link
+        className={css.link}
+        href="https://github.com/ZeroByter/spaces"
+        target="_blank"
+      >
+        GitHub
+      </Link>
     </div>
   );
 };

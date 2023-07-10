@@ -1,0 +1,24 @@
+.root {
+  display: flex;
+  gap: 10px;
+  background: rgba(245, 245, 245, 0.05);
+  padding: 8px;
+
+  .logo {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .link {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    padding: 4px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    &:active {
+      background: rgba(255, 255, 255, 0.15);
+    }
+  }
+}
