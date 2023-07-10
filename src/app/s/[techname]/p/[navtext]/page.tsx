@@ -4,6 +4,8 @@ import PostsSQL from "@/serverlib/sql-classes/posts";
 import SpacesSQL from "@/serverlib/sql-classes/spaces";
 import { notFound } from "next/navigation";
 import { FC } from "react";
+import css from "./page.module.scss";
+import { renderTimestamp } from "@/clientlib/essentials";
 
 const getSpace = async (techname: string) => {
   const space = await SpacesSQL.getByTechName(techname);
@@ -26,7 +28,7 @@ const getPost = async (navtext: string) => {
 };
 
 const getComments = async (postId: string) => {
-  return CommentsSQL.getByPostId(postId);
+  return await CommentsSQL.getByPostId(postId);
 };
 
 type Props = {
@@ -42,9 +44,12 @@ const Space: FC<Props> = async ({ params }) => {
   const comments = await getComments(post.id);
 
   return (
-    <div>
-      <div>{post.title}</div>
-      <div>{post.text}</div>
+    <div className={css.root}>
+      <div>
+        <span className={css.title}>{post.title}</span> - created at{" "}
+        {renderTimestamp(post.timecreated)}
+      </div>
+      <div className={css.text}>{post.text}</div>
       <Comments post={post} initialComments={comments} />
     </div>
   );

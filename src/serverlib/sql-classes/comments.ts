@@ -1,11 +1,14 @@
 import psqlQuery, { psqlInsert } from "@/serverlib/psql-conn";
 import { randomId } from "@/serverlib/essentials";
+import ServerComment from "@/types/serverComment";
+import ClientComment from "@/types/clientComment";
+import UsersSQL from "./users";
 
 export default class CommentsSQL {
   static async getById(id: string) {
     const data = (await psqlQuery("SELECT * FROM comments WHERE id=$1", [
       id,
-    ])) as any;
+    ])) as ServerComment[];
 
     return data[0];
   }
@@ -13,9 +16,18 @@ export default class CommentsSQL {
   static async getByPostId(postid: string) {
     const data = (await psqlQuery("SELECT * FROM comments WHERE postid=$1", [
       postid,
-    ])) as any;
+    ])) as ServerComment[];
 
-    return data;
+    return await Promise.all(
+      data.map(async (serverComment) => {
+        return {
+          id: serverComment.id,
+          text: serverComment.text,
+          createdBy: await UsersSQL.getById(serverComment.createdby),
+          timecreated: serverComment.timecreated,
+        } as ClientComment;
+      })
+    );
   }
 
   static async create(

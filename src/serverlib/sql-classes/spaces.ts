@@ -1,12 +1,13 @@
 import crypto from "crypto";
 import psqlQuery, { psqlInsert } from "@/serverlib/psql-conn";
 import { randomId } from "@/serverlib/essentials";
+import ServerSpace from "@/types/serverSpace";
 
 export default class SpacesSQL {
   static async getById(id: string) {
     const data = (await psqlQuery("SELECT * FROM spaces WHERE id=$1", [
       id,
-    ])) as any;
+    ])) as ServerSpace[];
 
     return data[0];
   }

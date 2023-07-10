@@ -1,8 +1,9 @@
 import { FC } from "react";
 import Post from "../shared/post";
+import ClientPost from "@/types/clientPost";
 
 type Props = {
-  posts: any[];
+  posts: ClientPost[];
 };
 
 const Posts: FC<Props> = ({ posts }) => {

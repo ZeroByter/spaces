@@ -1,12 +1,10 @@
 "use client";
 
-import SpacesSQL from "@/serverlib/sql-classes/spaces";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { FC } from "react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import css from "./createPost.module.scss";
 
 type Inputs = {
   title: string;
@@ -35,25 +33,27 @@ const Space: FC<Props> = ({ params }) => {
   };
 
   return (
-    <div>
-      <div>Create post</div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <input required placeholder="Title" {...register("title")} />
-        </div>
-        <div>
-          <textarea required placeholder="Text" {...register("text")} />
-        </div>
-        <div>
-          <button type="submit">
-            <b>Create</b>
-          </button>
-          <Link href={`/s/${params.techname}`}>
-            <button>Cancel</button>
-          </Link>
-        </div>
-      </form>
-    </div>
+    <main className={css.root}>
+      <div className={css.container}>
+        <div className={css.header}>Create post</div>
+        <form onSubmit={handleSubmit(onSubmit)} className={css.form}>
+          <div>
+            <input required placeholder="Title" {...register("title")} />
+          </div>
+          <div>
+            <textarea required placeholder="Text" {...register("text")} />
+          </div>
+          <div className={css.buttons}>
+            <button type="submit">
+              <b>Create</b>
+            </button>
+            <Link href={`/s/${params.techname}`}>
+              <button>Cancel</button>
+            </Link>
+          </div>
+        </form>
+      </div>
+    </main>
   );
 };
 

@@ -1,11 +1,13 @@
 "use client";
 
+import ClientComment from "@/types/clientComment";
+import ClientPost from "@/types/clientPost";
 import { FC } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 type Props = {
-  post: any;
-  setComments: (newComments: any[]) => void;
+  post: ClientPost;
+  setComments: (newComments: ClientComment[]) => void;
 };
 
 type Inputs = {

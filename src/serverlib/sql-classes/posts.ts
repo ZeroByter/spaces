@@ -1,11 +1,14 @@
 import psqlQuery, { psqlInsert } from "@/serverlib/psql-conn";
 import { randomId } from "@/serverlib/essentials";
+import ServerPost from "@/types/serverPost";
+import ClientPost from "@/types/clientPost";
+import UsersSQL from "./users";
 
 export default class PostsSQL {
   static async getById(id: string) {
     const data = (await psqlQuery("SELECT * FROM posts WHERE id=$1", [
       id,
-    ])) as any;
+    ])) as ServerPost[];
 
     return data[0];
   }
@@ -13,23 +16,66 @@ export default class PostsSQL {
   static async getBySpaceId(spaceId: string) {
     const data = (await psqlQuery("SELECT * FROM posts WHERE spaceid=$1", [
       spaceId,
-    ])) as any;
+    ])) as ServerPost[];
 
     return data;
+  }
+
+  static async clientGetBySpaceId(spaceId: string) {
+    const data = (await psqlQuery("SELECT * FROM posts WHERE spaceid=$1", [
+      spaceId,
+    ])) as ServerPost[];
+
+    return await Promise.all(
+      data.map(async (serverPost) => {
+        return {
+          id: serverPost.id,
+          createdBy: await UsersSQL.clientGetById(serverPost.createdby),
+          title: serverPost.title,
+          text: serverPost.text,
+          timecreated: serverPost.timecreated,
+          spaceid: serverPost.spaceid,
+          navtext: serverPost.navtext,
+        } as ClientPost;
+      })
+    );
   }
 
   static async getLatestGlobal() {
-    const data = (await psqlQuery("SELECT * FROM posts", [])) as any;
+    const data = (await psqlQuery("SELECT * FROM posts", [])) as ServerPost[];
 
-    return data;
+    return await Promise.all(
+      data.map(async (serverPost) => {
+        return {
+          id: serverPost.id,
+          createdBy: await UsersSQL.clientGetById(serverPost.createdby),
+          title: serverPost.title,
+          text: serverPost.text,
+          timecreated: serverPost.timecreated,
+          spaceid: serverPost.spaceid,
+          navtext: serverPost.navtext,
+        } as ClientPost;
+      })
+    );
   }
 
-  static async getByNavText(navtext: string) {
+  static async getByNavText(searchNavtext: string) {
     const data = (await psqlQuery("SELECT * FROM posts WHERE navtext=$1", [
-      navtext,
-    ])) as any;
+      searchNavtext,
+    ])) as ServerPost[];
 
-    return data[0];
+    const { id, createdby, title, text, timecreated, spaceid, navtext } =
+      data[0];
+
+    return {
+      id,
+      createdBy: await UsersSQL.clientGetById(createdby),
+      title,
+      text,
+      timecreated,
+      spaceid,
+      navtext,
+    } as ClientPost;
   }
 
   static async create(

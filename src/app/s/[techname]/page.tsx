@@ -16,7 +16,7 @@ const getSpace = async (techname: string) => {
 };
 
 const getPosts = async (spaceId: string) => {
-  return await PostsSQL.getBySpaceId(spaceId);
+  return await PostsSQL.clientGetBySpaceId(spaceId);
 };
 
 type Props = {

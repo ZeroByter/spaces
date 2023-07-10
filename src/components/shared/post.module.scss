@@ -1,0 +1,16 @@
+.root {
+  border: 1px solid gray;
+  display: inline-flex;
+  flex-direction: column;
+  padding: 4px;
+  border-radius: 4px;
+
+  .header {
+    display: flex;
+    gap: 50px;
+  }
+
+  .text {
+    color: white;
+  }
+}
