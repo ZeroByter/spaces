@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  SpacesSQL.create(res.name);
+  SpacesSQL.create(res.name, res.techname);
 
   const response = NextResponse.json({
     error: null,
