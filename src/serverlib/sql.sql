@@ -1,4 +1,4 @@
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
 	"id" VARCHAR(16) NOT NULL,
 	"username" VARCHAR(64) NOT NULL,
 	"password" VARCHAR(128) NOT NULL,
@@ -8,32 +8,36 @@ CREATE TABLE "users" (
 	PRIMARY KEY ("id")
 );
 
-CREATE TABLE "spaces" (
+CREATE TABLE IF NOT EXISTS "spaces" (
 	"id" VARCHAR(16) NOT NULL,
 	"name" VARCHAR(256) NOT NULL,
 	"timecreated" NUMERIC NOT NULL,
+	"techname" VARCHAR(256) NOT NULL,
 	PRIMARY KEY ("id")
 );
 
-CREATE TABLE "threads" (
+CREATE TABLE IF NOT EXISTS "posts" (
 	"id" VARCHAR(16) NOT NULL,
 	"createdby" VARCHAR(16) NOT NULL,
 	"title" VARCHAR(256) NOT NULL,
 	"text" TEXT NOT NULL,
 	"timecreated" NUMERIC NOT NULL,
 	"spaceid" VARCHAR(16) NOT NULL,
+	"navtext" VARCHAR(256) NOT NULL,
 	PRIMARY KEY ("id"),
 	CONSTRAINT "FK__users" FOREIGN KEY ("createdby") REFERENCES "users" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
 	CONSTRAINT "FK_threads_spaces" FOREIGN KEY ("spaceid") REFERENCES "spaces" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
-CREATE TABLE "comments" (
+CREATE TABLE IF NOT EXISTS "comments" (
 	"id" VARCHAR(16) NOT NULL,
 	"createdby" VARCHAR(16) NOT NULL,
-	"threadid" VARCHAR(16) NOT NULL,
+	"postid" VARCHAR(16) NOT NULL,
 	"text" TEXT NOT NULL,
 	"timecreated" NUMERIC NOT NULL,
+	"parentid" VARCHAR(16) NULL DEFAULT NULL,
 	PRIMARY KEY ("id"),
-	CONSTRAINT "FK__threads" FOREIGN KEY ("threadid") REFERENCES "threads" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
-	CONSTRAINT "FK__users" FOREIGN KEY ("createdby") REFERENCES "users" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
+	CONSTRAINT "FK__threads" FOREIGN KEY ("postid") REFERENCES "posts" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
+	CONSTRAINT "FK__users" FOREIGN KEY ("createdby") REFERENCES "users" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
+	CONSTRAINT "FK_comments_comments" FOREIGN KEY ("parentid") REFERENCES "comments" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
 );
