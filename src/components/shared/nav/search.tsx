@@ -8,8 +8,23 @@ const Search: FC = () => {
   const [results, setResults] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    const listener = (e: MouseEvent) => {
+      setVisible(false);
+    };
+
+    window.addEventListener("click", listener);
+
+    return () => {
+      window.removeEventListener("click", listener);
+    };
+  }, []);
+
+  useEffect(() => {
+    setVisible(search != "");
+
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
     }, 250);
@@ -44,7 +59,7 @@ const Search: FC = () => {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <div className={css.container} data-display={search != ""}>
+      <div className={css.container} data-display={visible}>
         {renderResults}
       </div>
     </div>
