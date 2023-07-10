@@ -80,6 +80,15 @@ export default class PostsSQL {
     } as ClientPost;
   }
 
+  static async search(search: string) {
+    const data = (await psqlQuery(
+      "SELECT * FROM posts WHERE title ILIKE $1 OR text ILIKE $1",
+      [`%${search}%`]
+    )) as ServerPost[];
+
+    return data;
+  }
+
   static async create(
     createdby: string,
     spaceid: string,

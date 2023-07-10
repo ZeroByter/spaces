@@ -30,6 +30,15 @@ export default class CommentsSQL {
     );
   }
 
+  static async search(search: string) {
+    const data = (await psqlQuery(
+      "SELECT * FROM comments WHERE text ILIKE $1",
+      [`%${search}%`]
+    )) as ServerComment[];
+
+    return data;
+  }
+
   static async create(
     createdby: string,
     postid: string,

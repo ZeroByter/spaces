@@ -40,6 +40,15 @@ export default class UsersSQL {
     return data[0];
   }
 
+  static async search(search: string) {
+    const data = (await psqlQuery(
+      "SELECT id,username,admin FROM users WHERE username ILIKE $1",
+      [`%${search}%`]
+    )) as ClientUser[];
+
+    return data;
+  }
+
   static async create(username: string, password: string, email?: string) {
     const newId = randomId();
 

@@ -1,0 +1,28 @@
+.root {
+  position: relative;
+
+  .container {
+    position: absolute;
+    background: #32323c;
+    border-radius: 4px;
+    width: 300%;
+    transform: translateX(-33%);
+    top: 30px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    opacity: 1;
+    transition: opacity 0.2s;
+
+    &[data-display="false"] {
+      opacity: 0;
+    }
+
+    .result {
+      border: 1px solid gray;
+      border-radius: 4px;
+      padding: 3px 4px;
+    }
+  }
+}

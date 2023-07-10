@@ -15,9 +15,17 @@ export default class SpacesSQL {
   static async getByTechName(techname: string) {
     const data = (await psqlQuery("SELECT * FROM spaces WHERE techname=$1", [
       techname,
-    ])) as any;
+    ])) as ServerSpace[];
 
     return data[0];
+  }
+
+  static async search(search: string) {
+    const data = (await psqlQuery("SELECT * FROM spaces WHERE name ILIKE $1", [
+      `%${search}%`,
+    ])) as ServerSpace[];
+
+    return data;
   }
 
   static async create(name: string, techname: string) {

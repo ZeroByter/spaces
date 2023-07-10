@@ -5,6 +5,7 @@ import { decryptAccountToken } from "@/serverlib/auth";
 import UsersSQL from "@/serverlib/sql-classes/users";
 import css from "./navbar.module.scss";
 import Spacer from "../spacer";
+import Search from "./search";
 
 async function getUser() {
   const account = cookies().get("account")?.value;
@@ -53,6 +54,8 @@ const Navbar: FC = async () => {
       <Link href="/" className={css.logo}>
         Spaces
       </Link>
+      <Spacer />
+      <Search />
       <Spacer />
       {renderLoggedIn()}
       {renderLoggedOut()}
