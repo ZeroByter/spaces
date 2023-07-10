@@ -1,7 +1,7 @@
 import cryptoJs from "crypto-js";
 import { MAX_AGE, setTokenCookie, getTokenCookie } from "./authCookies";
 import { NextApiRequest, NextApiResponse } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 
@@ -43,7 +43,7 @@ export function decryptAccountToken(token: string) {
   return session;
 }
 
-export function getLoginSession(req: any) {
+export function getLoginSession(req: NextRequest) {
   const token = getTokenCookie(req);
 
   if (!token) return;

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 type Inputs = {
@@ -9,6 +10,8 @@ type Inputs = {
 };
 
 export default function Login() {
+  const router = useRouter();
+
   const { register, handleSubmit } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const rawResponse = await fetch("/api/login", {
@@ -16,6 +19,8 @@ export default function Login() {
       body: JSON.stringify(data),
     });
     console.log(await rawResponse.json());
+    router.push("/");
+    router.refresh();
   };
 
   return (
