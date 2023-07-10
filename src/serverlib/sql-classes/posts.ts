@@ -64,6 +64,8 @@ export default class PostsSQL {
       searchNavtext,
     ])) as ServerPost[];
 
+    if (data.length == 0) return;
+
     const { id, createdby, title, text, timecreated, spaceid, navtext } =
       data[0];
 

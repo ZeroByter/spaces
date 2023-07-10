@@ -13,7 +13,7 @@ const Comment: FC<Props> = ({ comment }) => {
       <div className={css.header}>
         {comment.createdBy.username} - {renderTimestamp(comment.timecreated)}
       </div>
-      <div className={css.text}>memememem</div>
+      <div className={css.text}>{comment.text}</div>
     </div>
   );
 };
