@@ -1,6 +1,7 @@
 import { getLoginSession, setLoginSession } from "@/serverlib/auth";
 import { randomId } from "@/serverlib/essentials";
 import PostsSQL from "@/serverlib/sql-classes/posts";
+import PostVotesSQL from "@/serverlib/sql-classes/postvotes";
 import SpacesSQL from "@/serverlib/sql-classes/spaces";
 import { NextResponse, NextRequest } from "next/server";
 
@@ -44,7 +45,14 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  await PostsSQL.create(user.id, space.id, title, res.text, finalNavText);
+  const postId = await PostsSQL.create(
+    user.id,
+    space.id,
+    title,
+    res.text,
+    finalNavText
+  );
+  await PostVotesSQL.create(postId, user.id, true);
 
   const response = NextResponse.json({
     error: null,

@@ -1,5 +1,6 @@
 import { getLoginSession } from "@/serverlib/auth";
 import CommentsSQL from "@/serverlib/sql-classes/comments";
+import CommentVotesSQL from "@/serverlib/sql-classes/commentvotes";
 import PostsSQL from "@/serverlib/sql-classes/posts";
 import { NextResponse, NextRequest } from "next/server";
 
@@ -22,7 +23,13 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  await CommentsSQL.create(user.id, post.id, undefined, res.text);
+  const commentId = await CommentsSQL.create(
+    user.id,
+    post.id,
+    undefined,
+    res.text
+  );
+  await CommentVotesSQL.create(commentId, user.id, true);
 
   const newComments = await CommentsSQL.getByPostId(post.id);
 

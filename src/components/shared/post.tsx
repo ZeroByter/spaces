@@ -12,14 +12,14 @@ type Props = {
   post: ClientPostWithSpace;
 };
 
-const isTargetInsideLink = (target: Element): boolean => {
+const isTargetInsideLinkOrButton = (target: Element): boolean => {
   if (target == null) return false;
 
-  if (target.tagName === "A") {
+  if (target.tagName === "A" || target.tagName === "BUTTON") {
     return true;
   }
 
-  return isTargetInsideLink(target.parentNode as Element);
+  return isTargetInsideLinkOrButton(target.parentNode as Element);
 };
 
 const Post: FC<Props> = ({ post }) => {
@@ -28,7 +28,7 @@ const Post: FC<Props> = ({ post }) => {
   const postUrl = `/s/${post.space.techname}/p/${post.navtext}`;
 
   const handleRootClick = (e: MouseEvent<HTMLDivElement>) => {
-    if (!isTargetInsideLink(e.target as Element)) {
+    if (!isTargetInsideLinkOrButton(e.target as Element)) {
       router.push(postUrl);
     }
   };
