@@ -1,33 +1,64 @@
-import { FC } from "react";
+"use client";
+
+import { FC, MouseEvent } from "react";
 import css from "./post.module.scss";
 import Link from "next/link";
-import ClientPost from "@/types/clientPost";
-import SpacesSQL from "@/serverlib/sql-classes/spaces";
+import { ClientPostWithSpace } from "@/types/clientPost";
 import { renderTimestamp } from "@/clientlib/essentials";
+import classNames from "classnames";
+import { useRouter } from "next/navigation";
 
 type Props = {
-  post: ClientPost;
+  post: ClientPostWithSpace;
 };
 
-const getSpace = async (post: ClientPost) => {
-  return await SpacesSQL.getById(post.spaceid);
+const isTargetInsideLink = (target: Element): boolean => {
+  if (target == null) return false;
+
+  if (target.tagName === "A") {
+    return true;
+  }
+
+  return isTargetInsideLink(target.parentNode as Element);
 };
 
-const Post: FC<Props> = async ({ post }) => {
-  const space = await getSpace(post);
+const Post: FC<Props> = ({ post }) => {
+  const router = useRouter();
+
+  const postUrl = `/s/${post.space.techname}/p/${post.navtext}`;
+
+  const handleRootClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (!isTargetInsideLink(e.target as Element)) {
+      router.push(postUrl);
+    }
+  };
 
   return (
-    <div className={css.root}>
-      <div className={css.header}>
-        <div className={css.source}>
-          <Link href={`/s/${space.techname}`}>s/{space.name}</Link> -{" "}
-          {post.createdBy.username}
-        </div>
-        <div className={css.time}>{renderTimestamp(post.timecreated)}</div>
+    <div className={css.root} onClick={handleRootClick}>
+      <div className={css.score}>
+        <button className={classNames(css.button, css.positiveButton)}>
+          +
+        </button>
+        <div className={css.scoreCounter}>0</div>
+        <button className={classNames(css.button, css.negativeButton)}>
+          -
+        </button>
       </div>
-      <Link href={`/s/${space.techname}/p/${post.navtext}`}>
-        <div className={css.text}>{post.text}</div>
-      </Link>
+      <div className={css.contents}>
+        <div className={css.header}>
+          <div className={css.source}>
+            <Link href={`/s/${post.space.techname}`}>s/{post.space.name}</Link>{" "}
+            - <span className={css.author}>{post.createdBy.username}</span>
+          </div>
+          <div className={css.time}>{renderTimestamp(post.timecreated)}</div>
+        </div>
+        <Link href={postUrl}>
+          <div className={css.title}>{post.title}</div>
+        </Link>
+        <Link href={postUrl}>
+          <div className={css.text}>{post.text}</div>
+        </Link>
+      </div>
     </div>
   );
 };

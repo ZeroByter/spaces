@@ -14,12 +14,25 @@ export default class PostsSQL {
     return data[0];
   }
 
-  static async getBySpaceId(spaceId: string) {
+  static async getBySpaceId(spaceId: string): Promise<ClientPostWithSpace[]> {
     const data = (await psqlQuery("SELECT * FROM posts WHERE spaceid=$1", [
       spaceId,
     ])) as ServerPost[];
 
-    return data;
+    return await Promise.all(
+      data.map(async (serverPost) => {
+        return {
+          id: serverPost.id,
+          createdBy: await UsersSQL.clientGetById(serverPost.createdby),
+          space: await SpacesSQL.getById(serverPost.spaceid),
+          title: serverPost.title,
+          text: serverPost.text,
+          timecreated: serverPost.timecreated,
+          spaceid: serverPost.spaceid,
+          navtext: serverPost.navtext,
+        };
+      })
+    );
   }
 
   static async clientGetWithSpace(
@@ -60,7 +73,7 @@ export default class PostsSQL {
     );
   }
 
-  static async getLatestGlobal() {
+  static async getLatestGlobal(): Promise<ClientPostWithSpace[]> {
     const data = (await psqlQuery("SELECT * FROM posts", [])) as ServerPost[];
 
     return await Promise.all(
@@ -68,12 +81,13 @@ export default class PostsSQL {
         return {
           id: serverPost.id,
           createdBy: await UsersSQL.clientGetById(serverPost.createdby),
+          space: await SpacesSQL.getById(serverPost.spaceid),
           title: serverPost.title,
           text: serverPost.text,
           timecreated: serverPost.timecreated,
           spaceid: serverPost.spaceid,
           navtext: serverPost.navtext,
-        } as ClientPost;
+        };
       })
     );
   }

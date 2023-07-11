@@ -1,5 +1,4 @@
-import Posts from "@/components/space/posts";
-import PostsSQL from "@/serverlib/sql-classes/posts";
+import Posts from "@/components/shared/posts";
 import SpacesSQL from "@/serverlib/sql-classes/spaces";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -15,10 +14,6 @@ const getSpace = async (techname: string) => {
   return space;
 };
 
-const getPosts = async (spaceId: string) => {
-  return await PostsSQL.clientGetBySpaceId(spaceId);
-};
-
 type Props = {
   params: {
     techname: string;
@@ -27,7 +22,6 @@ type Props = {
 
 const Space: FC<Props> = async ({ params }) => {
   const space = await getSpace(params.techname);
-  const posts = await getPosts(space.id);
 
   return (
     <div>
@@ -37,7 +31,7 @@ const Space: FC<Props> = async ({ params }) => {
           <button>Create post</button>
         </Link>
       </div>
-      <Posts posts={posts} />
+      <Posts source="space" spaceId={space.id} />
     </div>
   );
 };
