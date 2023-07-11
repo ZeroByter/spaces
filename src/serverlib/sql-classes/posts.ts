@@ -1,8 +1,9 @@
 import psqlQuery, { psqlInsert } from "@/serverlib/psql-conn";
 import { randomId } from "@/serverlib/essentials";
 import ServerPost from "@/types/serverPost";
-import ClientPost from "@/types/clientPost";
+import ClientPost, { ClientPostWithSpace } from "@/types/clientPost";
 import UsersSQL from "./users";
+import SpacesSQL from "./spaces";
 
 export default class PostsSQL {
   static async getById(id: string) {
@@ -19,6 +20,24 @@ export default class PostsSQL {
     ])) as ServerPost[];
 
     return data;
+  }
+
+  static async clientGetWithSpace(
+    id: string
+  ): Promise<ClientPostWithSpace | undefined> {
+    const data = (await psqlQuery("SELECT * FROM posts WHERE id=$1", [
+      id,
+    ])) as ServerPost[];
+
+    if (data.length == 0) return;
+
+    const serverPost = data[0];
+
+    return {
+      ...serverPost,
+      createdBy: await UsersSQL.clientGetById(serverPost.createdby),
+      space: await SpacesSQL.getById(serverPost.spaceid),
+    };
   }
 
   static async clientGetBySpaceId(spaceId: string) {
@@ -80,13 +99,19 @@ export default class PostsSQL {
     } as ClientPost;
   }
 
-  static async search(search: string) {
+  static async search(search: string): Promise<ClientPostWithSpace[]> {
     const data = (await psqlQuery(
       "SELECT * FROM posts WHERE title ILIKE $1 OR text ILIKE $1",
       [`%${search}%`]
     )) as ServerPost[];
 
-    return data;
+    return await Promise.all(
+      data.map(async (post) => ({
+        ...post,
+        space: await SpacesSQL.getById(post.spaceid),
+        createdBy: await UsersSQL.clientGetById(post.createdby),
+      }))
+    );
   }
 
   static async create(

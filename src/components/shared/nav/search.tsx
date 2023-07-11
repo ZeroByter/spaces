@@ -10,6 +10,12 @@ const Search: FC = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [visible, setVisible] = useState(false);
 
+  const clearSearch = () => {
+    setSearch("");
+    setDebouncedSearch("");
+    setResults([]);
+  };
+
   useEffect(() => {
     const listener = (e: MouseEvent) => {
       setVisible(false);
@@ -48,7 +54,9 @@ const Search: FC = () => {
   }, [debouncedSearch]);
 
   const renderResults = results.map((result) => {
-    return <SearchResult key={result.id} result={result} />;
+    return (
+      <SearchResult key={result.id} result={result} clearSearch={clearSearch} />
+    );
   });
 
   return (
@@ -57,6 +65,7 @@ const Search: FC = () => {
         className={css.input}
         type="search"
         value={search}
+        placeholder="Search for anything..."
         onChange={(e) => setSearch(e.target.value)}
       />
       <div className={css.container} data-display={visible}>

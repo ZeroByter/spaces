@@ -1,8 +1,12 @@
 import psqlQuery, { psqlInsert } from "@/serverlib/psql-conn";
 import { randomId } from "@/serverlib/essentials";
 import ServerComment from "@/types/serverComment";
-import ClientComment from "@/types/clientComment";
+import ClientComment, {
+  ClientCommentWithSpaceAndPost,
+} from "@/types/clientComment";
 import UsersSQL from "./users";
+import PostsSQL from "./posts";
+import { ClientPostWithSpace } from "@/types/clientPost";
 
 export default class CommentsSQL {
   static async getById(id: string) {
@@ -30,13 +34,27 @@ export default class CommentsSQL {
     );
   }
 
-  static async search(search: string) {
+  static async search(
+    search: string
+  ): Promise<ClientCommentWithSpaceAndPost[]> {
     const data = (await psqlQuery(
       "SELECT * FROM comments WHERE text ILIKE $1",
       [`%${search}%`]
     )) as ServerComment[];
 
-    return data;
+    return await Promise.all(
+      data.map(async (comment) => {
+        const post = (await PostsSQL.clientGetWithSpace(
+          comment.postid
+        )) as ClientPostWithSpace;
+
+        return {
+          ...comment,
+          createdBy: await UsersSQL.clientGetById(comment.createdby),
+          post,
+        };
+      })
+    );
   }
 
   static async create(

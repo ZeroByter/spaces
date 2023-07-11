@@ -2,4 +2,20 @@
   border: 1px solid gray;
   border-radius: 4px;
   padding: 3px 4px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  &:active {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .type {
+    color: gray;
+    font-size: 10px;
+  }
+
+  .header {
+    font-size: 13px;
+  }
 }

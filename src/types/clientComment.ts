@@ -1,3 +1,4 @@
+import { ClientPostWithSpace } from "./clientPost";
 import ClientUser from "./clientUser";
 
 type ClientComment = {
@@ -5,6 +6,10 @@ type ClientComment = {
   text: string;
   timecreated: string;
   createdBy: ClientUser;
+};
+
+export type ClientCommentWithSpaceAndPost = ClientComment & {
+  post: ClientPostWithSpace;
 };
 
 export default ClientComment;
