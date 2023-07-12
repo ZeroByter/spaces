@@ -53,6 +53,15 @@ const Search: FC = () => {
     })();
   }, [debouncedSearch]);
 
+  const renderNoResults = () => {
+    if (results.length > 0) return;
+    return (
+      <div className={css.noResults}>
+        No results, try searching for something else!
+      </div>
+    );
+  };
+
   const renderResults = results.map((result) => {
     return (
       <SearchResult key={result.id} result={result} clearSearch={clearSearch} />
@@ -70,6 +79,7 @@ const Search: FC = () => {
       />
       <div className={css.container} data-display={visible}>
         {renderResults}
+        {renderNoResults()}
       </div>
     </div>
   );

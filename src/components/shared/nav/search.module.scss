@@ -16,6 +16,7 @@
   .container {
     position: absolute;
     background: #32323c;
+    border: 1px solid rgb(70, 70, 80);
     border-radius: 4px;
     width: 900px;
     max-width: 90vw;
@@ -41,10 +42,10 @@
       opacity: 0;
     }
 
-    .result {
-      border: 1px solid gray;
-      border-radius: 4px;
-      padding: 3px 4px;
+    .noResults {
+      font-size: 22px;
+      text-align: center;
+      padding: 6px;
     }
   }
 }
