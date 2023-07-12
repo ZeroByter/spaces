@@ -33,10 +33,18 @@
 
       &.positiveButton {
         border: 1px solid rgb(45, 90, 45);
+
+        &[data-selected="true"] {
+          background: rgb(45, 120, 45);
+        }
       }
       &.negativeButton {
         border: 1px solid rgb(90, 65, 65);
         align-items: baseline;
+
+        &[data-selected="true"] {
+          background: rgb(120, 40, 40);
+        }
       }
     }
 

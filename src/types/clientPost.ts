@@ -11,6 +11,7 @@ type ClientPost = {
   spaceid: string;
   navtext: string;
   votes: number;
+  userVote: number;
 };
 
 export type ClientPostWithComments = ClientPost & {

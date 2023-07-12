@@ -1,6 +1,6 @@
 import { getLoginSession } from "@/serverlib/auth";
-import PostsSQL from "@/serverlib/sql-classes/posts";
-import PostVotesSQL from "@/serverlib/sql-classes/postvotes";
+import CommentsSQL from "@/serverlib/sql-classes/comments";
+import CommentVotesSQL from "@/serverlib/sql-classes/commentvotes";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -14,12 +14,12 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const { postId, vote } = res;
+  const { commentId, vote } = res;
 
-  const post = await PostsSQL.getById(postId);
-  if (!post) {
+  const comment = await CommentsSQL.getById(commentId);
+  if (!comment) {
     return NextResponse.json({
-      error: "Post doesn't exist",
+      error: "Comment doesn't exist",
     });
   }
 
@@ -29,21 +29,20 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const currentVote = await PostVotesSQL.getVote(post.id, user.id);
+  const currentVote = await CommentVotesSQL.getVote(comment.id, user.id);
 
-  await PostVotesSQL.deleteVote(post.id, user.id);
+  await CommentVotesSQL.deleteVote(comment.id, user.id);
 
   if (!currentVote || currentVote.positive != vote) {
-    await PostVotesSQL.create(post.id, user.id, vote);
+    await CommentVotesSQL.create(comment.id, user.id, vote);
   }
 
-  const newVotes = await PostVotesSQL.getVotes(post.id);
+  const newVotes = await CommentVotesSQL.getVotes(comment.id);
 
   const response = NextResponse.json({
     error: null,
     data: {
       newVotes,
-      newUserVote: await PostVotesSQL.getVoteAsNumber(post.id, user.id),
     },
   });
 

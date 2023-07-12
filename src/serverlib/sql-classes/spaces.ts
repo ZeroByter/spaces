@@ -21,9 +21,10 @@ export default class SpacesSQL {
   }
 
   static async search(search: string) {
-    const data = (await psqlQuery("SELECT * FROM spaces WHERE name ILIKE $1", [
-      `%${search}%`,
-    ])) as ServerSpace[];
+    const data = (await psqlQuery(
+      "SELECT * FROM spaces WHERE name ILIKE $1 ORDER BY timecreated DESC",
+      [`%${search}%`]
+    )) as ServerSpace[];
 
     return data;
   }

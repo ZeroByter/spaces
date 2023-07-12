@@ -11,6 +11,19 @@ export default class CommentVotesSQL {
     return data[0].votes;
   }
 
+  static async getVote(commentId: string, userId: string) {
+    const data = (await psqlQuery(
+      "SELECT * FROM commentvotes WHERE commentid=$1 AND userid=$2",
+      [commentId, userId]
+    )) as any[];
+
+    if (data.length == 0) {
+      return;
+    }
+
+    return data[0];
+  }
+
   static async deleteVote(postId: string, userId: string) {
     await psqlDelete("commentvotes", {
       postid: postId,

@@ -40,7 +40,7 @@ export default class CommentsSQL {
     search: string
   ): Promise<ClientCommentWithSpaceAndPost[]> {
     const data = (await psqlQuery(
-      "SELECT * FROM comments WHERE text ILIKE $1",
+      "SELECT * FROM comments WHERE text ILIKE $1 ORDER BY timecreated DESC",
       [`%${search}%`]
     )) as ServerComment[];
 

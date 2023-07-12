@@ -1,10 +1,12 @@
+import { getLoginSession } from "@/serverlib/auth";
 import CommentsSQL from "@/serverlib/sql-classes/comments";
 import PostsSQL from "@/serverlib/sql-classes/posts";
 import SpacesSQL from "@/serverlib/sql-classes/spaces";
-import UsersSQL from "@/serverlib/sql-classes/users";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const user = getLoginSession(request);
+
   const searchParams = new URLSearchParams(request.url);
 
   let search = "";
@@ -17,7 +19,7 @@ export async function GET(request: Request) {
     ...space,
     type: "space",
   }));
-  const searchPosts = (await PostsSQL.search(search)).map((post) => ({
+  const searchPosts = (await PostsSQL.search(search, user?.id)).map((post) => ({
     ...post,
     type: "post",
   }));

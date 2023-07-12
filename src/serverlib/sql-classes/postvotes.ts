@@ -24,6 +24,16 @@ export default class PostVotesSQL {
     return data[0];
   }
 
+  static async getVoteAsNumber(postId: string, userId?: string) {
+    if (!userId) return 0;
+
+    const data = await this.getVote(postId, userId);
+
+    if (!data) return 0;
+
+    return data.positive ? 1 : -1;
+  }
+
   static async deleteVote(postId: string, userId: string) {
     await psqlDelete("postvotes", {
       postid: postId,

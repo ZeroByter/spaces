@@ -26,6 +26,7 @@ const Post: FC<Props> = ({ post }) => {
   const router = useRouter();
 
   const [votes, setVotes] = useState(post.votes);
+  const [userVote, setUserVote] = useState(post.userVote);
 
   const postUrl = `/s/${post.space.techname}/p/${post.navtext}`;
 
@@ -38,21 +39,23 @@ const Post: FC<Props> = ({ post }) => {
   const handleUpVote = async () => {
     const rawResponse = await fetch("/api/votePost", {
       method: "POST",
-      body: JSON.stringify({ postId: post.id, vote: 1 }),
+      body: JSON.stringify({ postId: post.id, vote: true }),
     });
     const response = await rawResponse.json();
 
     setVotes(response.data.newVotes);
+    setUserVote(response.data.newUserVote);
   };
 
   const handleDownVote = async () => {
     const rawResponse = await fetch("/api/votePost", {
       method: "POST",
-      body: JSON.stringify({ postId: post.id, vote: -1 }),
+      body: JSON.stringify({ postId: post.id, vote: false }),
     });
     const response = await rawResponse.json();
 
     setVotes(response.data.newVotes);
+    setUserVote(response.data.newUserVote);
   };
 
   return (
@@ -60,6 +63,7 @@ const Post: FC<Props> = ({ post }) => {
       <div className={css.score}>
         <button
           className={classNames(css.button, css.positiveButton)}
+          data-selected={userVote == 1}
           onClick={handleUpVote}
         >
           +
@@ -67,6 +71,7 @@ const Post: FC<Props> = ({ post }) => {
         <div className={css.scoreCounter}>{votes}</div>
         <button
           className={classNames(css.button, css.negativeButton)}
+          data-selected={userVote == -1}
           onClick={handleDownVote}
         >
           -

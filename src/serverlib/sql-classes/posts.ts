@@ -15,7 +15,10 @@ export default class PostsSQL {
     return data[0];
   }
 
-  static async getBySpaceId(spaceId: string): Promise<ClientPostWithSpace[]> {
+  static async getBySpaceId(
+    spaceId: string,
+    userId?: string
+  ): Promise<ClientPostWithSpace[]> {
     const data = (await psqlQuery("SELECT * FROM posts WHERE spaceid=$1", [
       spaceId,
     ])) as ServerPost[];
@@ -32,13 +35,15 @@ export default class PostsSQL {
           spaceid: serverPost.spaceid,
           navtext: serverPost.navtext,
           votes: await PostVotesSQL.getVotes(serverPost.id),
+          userVote: await PostVotesSQL.getVoteAsNumber(serverPost.id, userId),
         };
       })
     );
   }
 
   static async clientGetWithSpace(
-    id: string
+    id: string,
+    userId?: string
   ): Promise<ClientPostWithSpace | undefined> {
     const data = (await psqlQuery("SELECT * FROM posts WHERE id=$1", [
       id,
@@ -53,13 +58,15 @@ export default class PostsSQL {
       createdBy: await UsersSQL.clientGetById(serverPost.createdby),
       space: await SpacesSQL.getById(serverPost.spaceid),
       votes: await PostVotesSQL.getVotes(serverPost.id),
+      userVote: await PostVotesSQL.getVoteAsNumber(serverPost.id, userId),
     };
   }
 
   static async clientGetBySpaceId(spaceId: string) {
-    const data = (await psqlQuery("SELECT * FROM posts WHERE spaceid=$1", [
-      spaceId,
-    ])) as ServerPost[];
+    const data = (await psqlQuery(
+      "SELECT * FROM posts WHERE spaceid=$1 ORDER BY timecreated DESC",
+      [spaceId]
+    )) as ServerPost[];
 
     return await Promise.all(
       data.map(async (serverPost) => {
@@ -76,8 +83,13 @@ export default class PostsSQL {
     );
   }
 
-  static async getLatestGlobal(): Promise<ClientPostWithSpace[]> {
-    const data = (await psqlQuery("SELECT * FROM posts", [])) as ServerPost[];
+  static async getLatestGlobal(
+    userId?: string
+  ): Promise<ClientPostWithSpace[]> {
+    const data = (await psqlQuery(
+      "SELECT * FROM posts ORDER BY timecreated DESC",
+      []
+    )) as ServerPost[];
 
     return await Promise.all(
       data.map(async (serverPost) => {
@@ -91,15 +103,17 @@ export default class PostsSQL {
           spaceid: serverPost.spaceid,
           navtext: serverPost.navtext,
           votes: await PostVotesSQL.getVotes(serverPost.id),
+          userVote: await PostVotesSQL.getVoteAsNumber(serverPost.id, userId),
         };
       })
     );
   }
 
   static async getByNavText(searchNavtext: string) {
-    const data = (await psqlQuery("SELECT * FROM posts WHERE navtext=$1", [
-      searchNavtext,
-    ])) as ServerPost[];
+    const data = (await psqlQuery(
+      "SELECT * FROM posts WHERE navtext=$1 ORDER BY timecreated DESC",
+      [searchNavtext]
+    )) as ServerPost[];
 
     if (data.length == 0) return;
 
@@ -117,9 +131,12 @@ export default class PostsSQL {
     } as ClientPost;
   }
 
-  static async search(search: string): Promise<ClientPostWithSpace[]> {
+  static async search(
+    search: string,
+    userId?: string
+  ): Promise<ClientPostWithSpace[]> {
     const data = (await psqlQuery(
-      "SELECT * FROM posts WHERE title ILIKE $1 OR text ILIKE $1",
+      "SELECT * FROM posts WHERE title ILIKE $1 OR text ILIKE $1 ORDER BY timecreated DESC",
       [`%${search}%`]
     )) as ServerPost[];
 
@@ -129,6 +146,7 @@ export default class PostsSQL {
         space: await SpacesSQL.getById(post.spaceid),
         createdBy: await UsersSQL.clientGetById(post.createdby),
         votes: await PostVotesSQL.getVotes(post.id),
+        userVote: await PostVotesSQL.getVoteAsNumber(post.id, userId),
       }))
     );
   }
