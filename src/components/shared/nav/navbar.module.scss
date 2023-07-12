@@ -17,8 +17,11 @@
 
   .link {
     background: rgba(255, 255, 255, 0.05);
+    color: rgb(173, 183, 230);
     border-radius: 4px;
     padding: 4px;
+    cursor: pointer;
+    user-select: none;
 
     &:hover {
       background: rgba(255, 255, 255, 0.1);

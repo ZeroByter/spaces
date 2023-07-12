@@ -27,7 +27,7 @@ const Posts: FC<Props> = async ({ source, spaceId }) => {
     if (source == "global") {
       return await PostsSQL.getLatestGlobal(await getUserId());
     } else if (source == "space") {
-      return await PostsSQL.getBySpaceId(spaceId as string);
+      return await PostsSQL.getBySpaceId(spaceId as string, await getUserId());
     }
 
     return [];

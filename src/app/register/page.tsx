@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import css from "./register.module.scss";
+import { useRouter } from "next/navigation";
 
 type Inputs = {
   username: string;
@@ -11,13 +12,22 @@ type Inputs = {
 };
 
 export default function Login() {
+  const router = useRouter();
+
   const { register, handleSubmit } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const rawResponse = await fetch("/api/register", {
       method: "POST",
       body: JSON.stringify(data),
     });
-    console.log(await rawResponse.json());
+    const response = await rawResponse.json();
+
+    if (response.error != null) {
+      alert(response.error);
+    }
+
+    router.push("/");
+    router.refresh();
   };
 
   return (

@@ -17,6 +17,17 @@ export function setTokenCookie(res: NextResponse, token: string) {
   });
 }
 
+export function deleteTokenCookie(res: NextResponse, token: string) {
+  res.cookies.set(TOKEN_NAME, token, {
+    maxAge: -1,
+    expires: new Date(Date.now()), //only session test...
+    httpOnly: false,
+    secure: false, //process.env.NODE_ENV === "production",
+    path: "/",
+    sameSite: "strict",
+  });
+}
+
 export function removeTokenCookie(res: NextApiResponse) {
   const cookie = serialize(TOKEN_NAME, "", {
     maxAge: -1,

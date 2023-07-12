@@ -1,9 +1,18 @@
 import cryptoJs from "crypto-js";
-import { MAX_AGE, setTokenCookie, getTokenCookie } from "./authCookies";
+import {
+  MAX_AGE,
+  setTokenCookie,
+  getTokenCookie,
+  deleteTokenCookie,
+} from "./authCookies";
 import { NextApiRequest, NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
+
+export function getDeleteToken() {
+  return cryptoJs.AES.encrypt(JSON.stringify({}), TOKEN_SECRET);
+}
 
 export function getToken(session: { [name: string]: string }) {
   const createdAt = Date.now();
@@ -22,6 +31,12 @@ export function setLoginSession(
   const token = getToken(session);
 
   setTokenCookie(res, token.toString());
+}
+
+export function deleteLoginSession(res: NextResponse) {
+  const token = getDeleteToken();
+
+  deleteTokenCookie(res, token.toString());
 }
 
 export function decryptAccountToken(token: string) {

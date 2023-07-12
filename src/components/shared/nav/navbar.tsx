@@ -6,6 +6,7 @@ import UsersSQL from "@/serverlib/sql-classes/users";
 import css from "./navbar.module.scss";
 import Spacer from "../spacer";
 import Search from "./search";
+import LogoutButton from "./logoutButton";
 
 async function getUser() {
   const account = cookies().get("account")?.value;
@@ -43,9 +44,12 @@ const Navbar: FC = async () => {
     if (!user) return;
 
     return (
-      <Link className={css.link} href="/createSpace">
-        Create space
-      </Link>
+      <>
+        <Link className={css.link} href="/createSpace">
+          Create space
+        </Link>
+        <LogoutButton />
+      </>
     );
   };
 

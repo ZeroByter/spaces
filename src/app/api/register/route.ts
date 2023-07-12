@@ -1,12 +1,21 @@
+import { setLoginSession } from "@/serverlib/auth";
 import UsersSQL from "@/serverlib/sql-classes/users";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const res = await request.json();
 
-  UsersSQL.create(res.username, res.password, res.email);
+  const newUserId = await UsersSQL.create(
+    res.username,
+    res.password,
+    res.email
+  );
 
-  return NextResponse.json({
+  const response = NextResponse.json({
     error: null,
   });
+
+  await setLoginSession(response, { id: newUserId });
+
+  return response;
 }
