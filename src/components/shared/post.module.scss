@@ -68,6 +68,14 @@
       .time {
         font-size: 14px;
       }
+
+      .source {
+        a {
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
     }
 
     .title,
