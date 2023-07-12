@@ -4,6 +4,7 @@ import ServerPost from "@/types/serverPost";
 import ClientPost, { ClientPostWithSpace } from "@/types/clientPost";
 import UsersSQL from "./users";
 import SpacesSQL from "./spaces";
+import PostVotesSQL from "./postvotes";
 
 export default class PostsSQL {
   static async getById(id: string) {
@@ -30,6 +31,7 @@ export default class PostsSQL {
           timecreated: serverPost.timecreated,
           spaceid: serverPost.spaceid,
           navtext: serverPost.navtext,
+          votes: await PostVotesSQL.getVotes(serverPost.id),
         };
       })
     );
@@ -50,6 +52,7 @@ export default class PostsSQL {
       ...serverPost,
       createdBy: await UsersSQL.clientGetById(serverPost.createdby),
       space: await SpacesSQL.getById(serverPost.spaceid),
+      votes: await PostVotesSQL.getVotes(serverPost.id),
     };
   }
 
@@ -87,6 +90,7 @@ export default class PostsSQL {
           timecreated: serverPost.timecreated,
           spaceid: serverPost.spaceid,
           navtext: serverPost.navtext,
+          votes: await PostVotesSQL.getVotes(serverPost.id),
         };
       })
     );
@@ -124,6 +128,7 @@ export default class PostsSQL {
         ...post,
         space: await SpacesSQL.getById(post.spaceid),
         createdBy: await UsersSQL.clientGetById(post.createdby),
+        votes: await PostVotesSQL.getVotes(post.id),
       }))
     );
   }

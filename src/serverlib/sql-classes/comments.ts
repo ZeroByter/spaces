@@ -7,6 +7,7 @@ import ClientComment, {
 import UsersSQL from "./users";
 import PostsSQL from "./posts";
 import { ClientPostWithSpace } from "@/types/clientPost";
+import CommentVotesSQL from "./commentvotes";
 
 export default class CommentsSQL {
   static async getById(id: string) {
@@ -29,6 +30,7 @@ export default class CommentsSQL {
           text: serverComment.text,
           createdBy: await UsersSQL.getById(serverComment.createdby),
           timecreated: serverComment.timecreated,
+          votes: await CommentVotesSQL.getVotes(serverComment.id),
         } as ClientComment;
       })
     );
@@ -51,6 +53,7 @@ export default class CommentsSQL {
         return {
           ...comment,
           createdBy: await UsersSQL.clientGetById(comment.createdby),
+          votes: await CommentVotesSQL.getVotes(comment.id),
           post,
         };
       })

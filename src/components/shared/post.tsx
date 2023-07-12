@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, MouseEvent } from "react";
+import { FC, MouseEvent, useState } from "react";
 import css from "./post.module.scss";
 import Link from "next/link";
 import { ClientPostWithSpace } from "@/types/clientPost";
@@ -25,6 +25,8 @@ const isTargetInsideLinkOrButton = (target: Element): boolean => {
 const Post: FC<Props> = ({ post }) => {
   const router = useRouter();
 
+  const [votes, setVotes] = useState(post.votes);
+
   const postUrl = `/s/${post.space.techname}/p/${post.navtext}`;
 
   const handleRootClick = (e: MouseEvent<HTMLDivElement>) => {
@@ -33,14 +35,40 @@ const Post: FC<Props> = ({ post }) => {
     }
   };
 
+  const handleUpVote = async () => {
+    const rawResponse = await fetch("/api/votePost", {
+      method: "POST",
+      body: JSON.stringify({ postId: post.id, vote: 1 }),
+    });
+    const response = await rawResponse.json();
+
+    setVotes(response.data.newVotes);
+  };
+
+  const handleDownVote = async () => {
+    const rawResponse = await fetch("/api/votePost", {
+      method: "POST",
+      body: JSON.stringify({ postId: post.id, vote: -1 }),
+    });
+    const response = await rawResponse.json();
+
+    setVotes(response.data.newVotes);
+  };
+
   return (
     <div className={css.root} onClick={handleRootClick}>
       <div className={css.score}>
-        <button className={classNames(css.button, css.positiveButton)}>
+        <button
+          className={classNames(css.button, css.positiveButton)}
+          onClick={handleUpVote}
+        >
           +
         </button>
-        <div className={css.scoreCounter}>0</div>
-        <button className={classNames(css.button, css.negativeButton)}>
+        <div className={css.scoreCounter}>{votes}</div>
+        <button
+          className={classNames(css.button, css.negativeButton)}
+          onClick={handleDownVote}
+        >
           -
         </button>
       </div>

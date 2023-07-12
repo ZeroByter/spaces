@@ -6,6 +6,7 @@ type ClientComment = {
   text: string;
   timecreated: string;
   createdBy: ClientUser;
+  votes: number;
 };
 
 export type ClientCommentWithSpaceAndPost = ClientComment & {
