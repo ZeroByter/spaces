@@ -52,7 +52,7 @@ const Navbar: FC = async () => {
   return (
     <div className={css.root}>
       <Link href="/" className={css.logo}>
-        Spaces
+        Spaces <span className={css.alpha}>(alpha)</span>
       </Link>
       <Spacer />
       <Search />
