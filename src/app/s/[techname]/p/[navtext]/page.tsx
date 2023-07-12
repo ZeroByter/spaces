@@ -45,12 +45,20 @@ const Space: FC<Props> = async ({ params }) => {
 
   return (
     <div className={css.root}>
-      <div>
-        <span className={css.title}>{post.title}</span> - created at{" "}
-        {renderTimestamp(post.timecreated)}
+      <div className={css.container}>
+        <div>upvotes here</div>
+        <div className={css.contents}>
+          <div className={css.header}>
+            <div className={css.postedBy}>
+              Posted by ZeroByter - {renderTimestamp(post.timecreated)}
+            </div>
+            <span className={css.title}>{post.title}</span>
+          </div>
+          <div className={css.text}>{post.text}</div>
+          <div className={css.divider}></div>
+          <Comments post={post} initialComments={comments} />
+        </div>
       </div>
-      <div className={css.text}>{post.text}</div>
-      <Comments post={post} initialComments={comments} />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import ClientComment from "@/types/clientComment";
 import ClientPost from "@/types/clientPost";
 import { FC } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import css from "./createComment.module.scss";
 
 type Props = {
   post: ClientPost;
@@ -28,11 +29,15 @@ const CreateComment: FC<Props> = ({ post, setComments }) => {
   };
 
   return (
-    <div>
-      <div>Post reply</div>
+    <div className={css.root}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <textarea required {...register("text")} />
+          <textarea
+            className={css.textarea}
+            placeholder="Write an awesome reply!"
+            required
+            {...register("text")}
+          />
         </div>
         <div>
           <button type="submit">post</button>

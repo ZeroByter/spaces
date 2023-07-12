@@ -55,9 +55,14 @@ const Navbar: FC = async () => {
 
   return (
     <div className={css.root}>
-      <Link href="/" className={css.logo}>
-        Spaces <span className={css.alpha}>(alpha)</span>
-      </Link>
+      <span>
+        <Link href="/" className={css.logo}>
+          Spaces
+        </Link>
+        <Link href="/about#alpha" className={css.alpha}>
+          (alpha) (click for more info)
+        </Link>
+      </span>
       <Spacer />
       <Search />
       <Spacer />
