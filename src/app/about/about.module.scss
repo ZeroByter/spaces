@@ -1,0 +1,16 @@
+.root {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+
+  .container {
+    background: rgba(245, 245, 245, 0.075);
+    padding: 10px;
+
+    .alpha {
+      &[data-highlight="true"] {
+        background: rgba(255, 238, 0, 0.25);
+      }
+    }
+  }
+}
