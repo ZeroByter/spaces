@@ -2,8 +2,14 @@ import { getLoginSession, setLoginSession } from "@/serverlib/auth";
 import SpacesSQL from "@/serverlib/sql-classes/spaces";
 import { NextResponse, NextRequest } from "next/server";
 
-export async function POST(request: NextRequest) {
-  const res = await request.json();
+export async function GET(request: NextRequest) {
+  const params = new URLSearchParams(request.url);
+
+  let techname = "";
+  for (const value of params.values()) {
+    techname = value;
+    break;
+  }
 
   const user = getLoginSession(request);
 
@@ -13,17 +19,10 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  if (await SpacesSQL.getByTechName(res.techname)) {
-    return NextResponse.json({
-      error: "Technical name already taken!",
-    });
-  }
-
-  SpacesSQL.create(res.name, res.techname);
-
-  const response = NextResponse.json({
+  return NextResponse.json({
     error: null,
+    data: {
+      available: (await SpacesSQL.getByTechName(techname)) == null,
+    },
   });
-
-  return response;
 }

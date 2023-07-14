@@ -21,6 +21,14 @@
       flex-direction: column;
       gap: 4px;
 
+      .error {
+        font-size: 12px;
+        background: rgb(61, 12, 12);
+        border: 1px solid rgb(90, 0, 0);
+        border-radius: 4px;
+        padding: 4px 6px;
+      }
+
       .buttons {
         display: flex;
         justify-content: space-between;

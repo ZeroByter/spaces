@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import css from "./createSpace.module.scss";
+import { useDebounce } from "usehooks-ts";
 
 type Inputs = {
   techname: string;
@@ -14,9 +15,20 @@ type Inputs = {
 export default function CreateSpace() {
   const router = useRouter();
 
-  const { register, handleSubmit, watch, setValue } = useForm<Inputs>();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useForm<Inputs>();
 
   const watchName = watch("name");
+  const watchTechName = watch("techname");
+
+  const debouncedWatchTechName = useDebounce(watchTechName, 250);
 
   useEffect(() => {
     if (watchName) {
@@ -24,14 +36,34 @@ export default function CreateSpace() {
     }
   }, [watchName]);
 
+  useEffect(() => {
+    (async () => {
+      const rawResponse = await fetch(
+        `/api/spaceCheckTechNameAvailable?techName=${encodeURIComponent(
+          debouncedWatchTechName
+        )}`
+      );
+      const response = await rawResponse.json();
+
+      if (!response.data.available) {
+        setError("techname", { message: "Technical name not available!" });
+      } else {
+        clearErrors("techname");
+      }
+    })();
+  }, [debouncedWatchTechName]);
+
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const rawResponse = await fetch("/api/createSpace", {
+    if (!isValid) return;
+
+    await fetch("/api/createSpace", {
       method: "POST",
       body: JSON.stringify(data),
     });
-    console.log(await rawResponse.json());
-    // router.push("/");
+    router.push(`/s/${data.techname}`);
   };
+
+  const isValid = !errors.techname;
 
   return (
     <main className={css.root}>
@@ -50,8 +82,11 @@ export default function CreateSpace() {
               {...register("techname")}
             />
           </div>
+          {errors.techname && (
+            <div className={css.error}>{errors.techname?.message}</div>
+          )}
           <div className={css.buttons}>
-            <button type="submit">
+            <button type="submit" disabled={!isValid}>
               <b>Create</b>
             </button>
             <Link href="/">

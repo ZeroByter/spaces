@@ -3,16 +3,16 @@
 import { FC, useEffect, useState } from "react";
 import css from "./search.module.scss";
 import SearchResult from "./searchResult";
+import { useDebounce } from "usehooks-ts";
 
 const Search: FC = () => {
   const [results, setResults] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 250);
   const [visible, setVisible] = useState(false);
 
   const clearSearch = () => {
     setSearch("");
-    setDebouncedSearch("");
     setResults([]);
   };
 
@@ -30,14 +30,6 @@ const Search: FC = () => {
 
   useEffect(() => {
     setVisible(search != "");
-
-    const timeout = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 250);
-
-    return () => {
-      clearTimeout(timeout);
-    };
   }, [search]);
 
   useEffect(() => {
